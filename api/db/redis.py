@@ -10,16 +10,16 @@ load_dotenv()
 class RedisClient:
     def __init__(
         self,
-        host: str = None,
-        port: int = None,
+        host: str = os.getenv("REDIS_HOST"),
+        port: int = os.getenv("REDIS_PORT"),
         db: int = 0,
-        password: str = None,
+        password: str = os.getenv("REDIS_PASSWORD"),
         decode_responses: bool = True,
     ):
-        self.host = host or os.getenv("REDIS_HOST", "localhost")
-        self.port = port or int(os.getenv("REDIS_PORT", "6379"))
+        self.host = host
+        self.port = port
         self.db = db
-        self.password = password or os.getenv("REDIS_PASSWORD")
+        self.password = password
         self.decode_responses = decode_responses
         self.connection: Optional[aio_redis.Redis] = None
 
@@ -40,7 +40,7 @@ class RedisClient:
 
     async def disconnect(self):
         if self.connection:
-            await self.connection.close()
+            await self.connection.aclose()
             self.connection = None
 
     async def get(self, key: str) -> Any:
