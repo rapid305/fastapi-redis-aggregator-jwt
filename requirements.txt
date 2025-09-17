@@ -1,0 +1,15 @@
+python-dotenv
+fastapi
+httpx
+uvicorn
+pydantic
+sqlalchemy
+redis
+redis[hiredis]
+pytest
+black
+pytest-asyncio
+PyJWT
+passlib
+
+
