@@ -9,7 +9,7 @@ load_dotenv(override=True)
 
 class CryptoCurrencyService:
     """
-        Класс для обращения к внешнему API (coinmarketcap).
+    Класс для обращения к внешнему API (coinmarketcap).
     """
 
     def __init__(

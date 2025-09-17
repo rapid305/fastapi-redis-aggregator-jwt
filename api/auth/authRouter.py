@@ -6,7 +6,11 @@ from fastapi.security import OAuth2PasswordRequestForm
 from api.db.db_postgres import get_session
 from api.auth.auth_model import User  # SQLAlchemy модель
 from api.auth.auth_schemes import Token, UserCreate, UserOut
-from api.auth.auth_service import create_access_token, verify_password, get_password_hash
+from api.auth.auth_service import (
+    create_access_token,
+    verify_password,
+    get_password_hash,
+)
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -14,7 +18,7 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 @router.post("/login", response_model=Token)
 async def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
-    session: AsyncSession = Depends(get_session)
+    session: AsyncSession = Depends(get_session),
 ):
     stmt = select(User).where(User.username == form_data.username)
     result = await session.execute(stmt)
@@ -23,7 +27,7 @@ async def login(
     if not user or not verify_password(form_data.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password"
+            detail="Incorrect username or password",
         )
 
     access_token = create_access_token(data={"sub": user.username})
@@ -31,10 +35,7 @@ async def login(
 
 
 @router.post("/register", response_model=UserOut, status_code=201)
-async def register(
-    user_data: UserCreate,
-    session: AsyncSession = Depends(get_session)
-):
+async def register(user_data: UserCreate, session: AsyncSession = Depends(get_session)):
     # Проверка уникальности
     existing = await session.execute(
         select(User).where(
@@ -44,7 +45,7 @@ async def register(
     if existing.scalars().first():
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Username or email already exists"
+            detail="Username or email already exists",
         )
 
     hashed_password = get_password_hash(user_data.password)
@@ -53,7 +54,7 @@ async def register(
         email=user_data.email,
         full_name=user_data.full_name,
         hashed_password=hashed_password,
-        is_active=True
+        is_active=True,
     )
     session.add(new_user)
     await session.commit()

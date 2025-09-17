@@ -17,7 +17,7 @@ from api.auth.auth_model import User
 
 load_dotenv(override=True)
 
-SECRET_KEY = os.getenv('SECRET_KEY_FOR_JWT')
+SECRET_KEY = os.getenv("SECRET_KEY_FOR_JWT")
 if not SECRET_KEY:
     raise RuntimeError("SECRET_KEY_FOR_JWT not set")
 ALGORITHM = "HS256"
@@ -39,7 +39,9 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
     to_encode = data.copy()
-    expire = datetime.now(timezone.utc) + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
+    expire = datetime.now(timezone.utc) + (
+        expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    )
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
@@ -53,7 +55,7 @@ async def get_user_from_db(session: AsyncSession, username: str) -> User | None:
 
 async def get_current_user(
     token: Annotated[str, Depends(oauth2_scheme)],
-    session: AsyncSession = Depends(get_session)
+    session: AsyncSession = Depends(get_session),
 ) -> User:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,

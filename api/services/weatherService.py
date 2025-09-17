@@ -10,7 +10,7 @@ load_dotenv(verbose=True)
 
 class WeatherClient:
     """
-        Класс для обращения к внешнему API (OpenWeather).
+    Класс для обращения к внешнему API (OpenWeather).
     """
 
     def __init__(
