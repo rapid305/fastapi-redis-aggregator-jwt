@@ -4,6 +4,7 @@ from fastapi import FastAPI , Request , HTTPException
 from fastapi.responses import JSONResponse
 from api.routers.weatherRouter import router as weatherRouter
 from api.routers.cryptoRouter import router as cryptoRouter
+from api.auth.authRouter import router as authRouter
 import time
 from typing import Callable
 import logging
@@ -12,6 +13,8 @@ app = FastAPI()
 
 app.include_router(weatherRouter)
 app.include_router(cryptoRouter)
+
+app.include_router(authRouter)
 
 logging.basicConfig(level=logging.INFO)
 
