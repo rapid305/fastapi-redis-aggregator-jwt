@@ -11,4 +11,5 @@ vcs.xml
 *.sqlite3
 *.log
 .DS_Store
-.idea
+.env
+.env.*

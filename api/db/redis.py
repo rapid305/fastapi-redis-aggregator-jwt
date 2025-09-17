@@ -10,8 +10,8 @@ load_dotenv()
 class RedisClient:
     def __init__(
         self,
-        host: str = os.getenv("REDIS_HOST"),
-        port: int = os.getenv("REDIS_PORT"),
+        host: str = os.getenv("REDIS_HOST", "localhost"),
+        port: int = os.getenv("REDIS_PORT", "6379"),
         db: int = 0,
         password: str = os.getenv("REDIS_PASSWORD"),
         decode_responses: bool = True,
