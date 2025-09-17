@@ -1,3 +1,5 @@
+python-jose
+load-dotenv
 python-dotenv
 fastapi
 httpx
@@ -11,5 +13,9 @@ black
 pytest-asyncio
 PyJWT
 passlib
-
-
+pydantic[email]
+email-validator
+python-multipart
+alembic
+asyncpg
+bcrypt
