@@ -4,18 +4,21 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.security import OAuth2PasswordRequestForm
 
 from api.db.db_postgres import get_session
-from api.auth.auth_model import User  # SQLAlchemy модель
+from api.auth.auth_model import User
 from api.auth.auth_schemes import Token, UserCreate, UserOut
 from api.auth.auth_service import (
     create_access_token,
     verify_password,
     get_password_hash,
 )
+# import logging
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
+# logging.basicConfig(level=logging.INFO)
+# logger = logging.getLogger(__name__)
 
-@router.post("/login", response_model=Token)
+@router.post("/token", response_model=Token)
 async def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     session: AsyncSession = Depends(get_session),
@@ -31,8 +34,8 @@ async def login(
         )
 
     access_token = create_access_token(data={"sub": user.username})
+  # logger.info("Token for %s: %s", user.username, access_token)
     return {"access_token": access_token, "token_type": "bearer"}
-
 
 @router.post("/register", response_model=UserOut, status_code=201)
 async def register(user_data: UserCreate, session: AsyncSession = Depends(get_session)):
@@ -63,9 +66,12 @@ async def register(user_data: UserCreate, session: AsyncSession = Depends(get_se
     return new_user
 
 
-@router.get("/get-user")
-async def get_user():
-    return {"message": "Get user endpoint"}
+@router.get("/get-users" , response_model=list[UserOut])
+async def get_all_users(session: AsyncSession = Depends(get_session)):
+     stmt = select(User)
+     res = await session.execute(stmt)
+     users = res.scalars().all()
+     return [UserOut.model_validate(user) for user in users]
 
 
 @router.get("/get-user/{user_id}/details")
