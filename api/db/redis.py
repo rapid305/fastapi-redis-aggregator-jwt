@@ -1,6 +1,6 @@
 import redis.asyncio as aio_redis
 import json
-from typing import Optional, Any, Coroutine
+from typing import Optional, Any
 import os
 from dotenv import load_dotenv
 

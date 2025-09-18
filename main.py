@@ -1,42 +1,38 @@
 import logging
+import time
+from typing import Callable
 
-from fastapi import FastAPI, Request, HTTPException
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI, Request
 from api.routers.weatherRouter import router as weatherRouter
 from api.routers.cryptoRouter import router as cryptoRouter
 from api.auth.authRouter import router as authRouter
-import time
-from typing import Callable
-import logging
 
-app = FastAPI()
-
-app.include_router(weatherRouter)
-app.include_router(cryptoRouter)
-
-app.include_router(authRouter)
-
+# Настройка логирования
 logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+app = FastAPI(title="API Agregator")
 
 
 @app.middleware("http")
-async def middleware_timer(request: Request, call_next: Callable):
+async def unified_middleware(request: Request, call_next: Callable):
+    # Логирование заголовков
+    logger.info(f"Incoming request headers: {request.headers}")
+
+    # Замер времени выполнения
     start_time = time.time()
     response = await call_next(request)
     process_time = time.time() - start_time
-    logging.info(f"The response time is {process_time} seconds")
+    logger.info(f"The response time is {process_time:.4f} seconds")
+
     return response
 
 
-@app.middleware("http")
-async def error_handling_middleware(request: Request, call_next):
-    try:
-        return await call_next(request)
-    except HTTPException as e:
-        return JSONResponse(
-            status_code=500, content={"detail": "Internal Server Error"}
-        )
+app.include_router(weatherRouter)
+app.include_router(cryptoRouter)
+app.include_router(authRouter)
 
 
 if __name__ == "__main__":
-    print("PyCharm")
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=8000)
