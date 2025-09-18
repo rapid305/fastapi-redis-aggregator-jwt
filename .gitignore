@@ -2,6 +2,8 @@
 __pycache__/
 __pycache__
 _idea/
+idea
+.idea
 .vscode/
 vcs.xml
 *.pyc
