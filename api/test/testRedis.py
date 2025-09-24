@@ -5,7 +5,7 @@ from api.db.redis import redis_client
 
 
 @pytest.mark.asyncio
-async def test_redis():
+async def test_redis():  # test basic Redis operations
     await redis_client.connect()
     logging.log(logging.INFO, "Connected to Redis")
 

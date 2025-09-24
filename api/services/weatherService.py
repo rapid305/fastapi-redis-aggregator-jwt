@@ -8,10 +8,8 @@ from api.db.redis import redis_client
 load_dotenv(verbose=True)
 
 
+# cryptocurrency service to interact with openWeather API
 class WeatherClient:
-    """
-    Класс для обращения к внешнему API (OpenWeather).
-    """
 
     def __init__(
         self,
@@ -38,7 +36,7 @@ class WeatherClient:
         lang: str = "ru",
     ) -> Dict[str, Any]:
 
-        # Сначала проверяем кеш
+        # Check cache first
         cache_key = f"weather:{city}:{units}:{lang}"
         cached_data = await redis_client.get_json(cache_key)
         if cached_data:
@@ -66,7 +64,8 @@ class WeatherClient:
             )
 
         data = resp.json()
-        # Сужженые данные из ответа API
+
+        # Data normalization
         normalized = {
             "city": data.get("name"),
             "temp": data.get("main", {}).get("temp"),
@@ -76,8 +75,8 @@ class WeatherClient:
             "wind_speed": data.get("wind", {}).get("speed"),
             "dt": data.get("dt"),
         }
-        result = {"data": normalized}  # Оборачиваем в ключ "data"
+        result = {"data": normalized}
 
-        await redis_client.cache_json(cache_key, result, ttl=300)  # Кэшируем на 5 минут
+        await redis_client.cache_json(cache_key, result, ttl=300)  # Cache for 5 minutes
 
         return result

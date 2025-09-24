@@ -10,5 +10,5 @@ weatherClient = WeatherClient()
 
 
 @router.get("/{city}")
-async def get_weather(city: str , user: User = Depends(get_current_active_user)):
+async def get_weather(city: str, user: User = Depends(get_current_active_user)):
     return await weatherClient.current_weather(city)

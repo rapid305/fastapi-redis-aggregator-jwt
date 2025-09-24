@@ -6,6 +6,7 @@ from datetime import datetime
 import uuid
 
 
+# User model
 class User(Base):
     __tablename__ = "users"
 

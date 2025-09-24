@@ -7,11 +7,8 @@ from fastapi import HTTPException
 load_dotenv(override=True)
 
 
+# cryptocurrency service to interact with CoinMarketCap API
 class CryptoCurrencyService:
-    """
-    Класс для обращения к внешнему API (coinmarketcap).
-    """
-
     def __init__(
         self,
         api_key: str | None = os.getenv("COINMARKETCAP_API_KEY"),
@@ -58,4 +55,5 @@ class CryptoCurrencyService:
         return data
 
 
+# Singleton instance of the crypto service
 crypto_service = CryptoCurrencyService()

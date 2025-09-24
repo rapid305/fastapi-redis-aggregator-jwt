@@ -1,17 +1,19 @@
 from fastapi import APIRouter, Depends
 
 from api.services.coinmarketcap import CryptoCurrencyService
-from api.auth.auth_service import get_current_active_user  # защита через JWT
+from api.auth.auth_service import (
+    get_current_active_user,
+)  # to protect the endpoint with auth (JWT)
 from api.auth.auth_model import User
+from api.services.coinmarketcap import crypto_service
 
 router = APIRouter(
     prefix="/crypto",
     tags=["crypto"],
 )
 
-crypto_service = CryptoCurrencyService()
 
-
+# Endpoint to get cryptocurrency data
 @router.get("/")
 async def get_crypto(
     currency: str,

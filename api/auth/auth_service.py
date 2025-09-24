@@ -18,26 +18,36 @@ from api.auth.auth_model import User
 
 load_dotenv(override=True)
 
-SECRET_KEY = os.getenv("SECRET_KEY_FOR_JWT")
+# ------------------------------------------------------------------------------
+# Settings for JWT
+
+SECRET_KEY = os.getenv("SECRET_KEY_FOR_JWT")  # Secret key from .env file for JWT
 if not SECRET_KEY:
     raise RuntimeError("SECRET_KEY_FOR_JWT not set")
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ALGORITHM = "HS256"  # Algorithm used for encoding the JWT
+ACCESS_TOKEN_EXPIRE_MINUTES = 30  # Token expiration time in minutes
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")  # scheme for OAuth2
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(
+    schemes=["bcrypt"], deprecated="auto"
+)  # Password hashing context
+
+# ------------------------------------------------------------------------------
 
 
+# Hashing the password
 def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
 
+# Verifying the password
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
 
+# Creating JWT token
 def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
     to_encode = data.copy()
     expire = datetime.now(timezone.utc) + (
@@ -48,12 +58,14 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None) -> s
     return encoded_jwt
 
 
+# Fetching user from DB
 async def get_user_from_db(session: AsyncSession, username: str) -> User | None:
     stmt = select(User).where(User.username == username)
     res = await session.execute(stmt)
     return res.scalars().first()
 
 
+# Getting current user from token
 async def get_current_user(
     token: Annotated[str, Depends(oauth2_scheme)],
     session: AsyncSession = Depends(get_session),
@@ -78,6 +90,7 @@ async def get_current_user(
     return user
 
 
+# Ensuring the user is active
 async def get_current_active_user(
     current_user: Annotated[User, Depends(get_current_user)],
 ) -> User:
