@@ -2,7 +2,7 @@ services:
   api:
     build: .
     env_file:
-      - .env
+      - .env.example
     environment:
       DB_HOST: db
     ports:
@@ -21,7 +21,7 @@ services:
   db:
     image: postgres:alpine
     env_file:
-      - .env
+      - .env.example
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASS}
