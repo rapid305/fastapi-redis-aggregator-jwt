@@ -11,7 +11,8 @@ vcs.xml
 *.pyd
 *.db
 *.sqlite3
-*.log
+*.logS
 .DS_Store
 .env
 .env.*
+env
